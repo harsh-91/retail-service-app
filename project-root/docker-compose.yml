@@ -1,0 +1,109 @@
+version: '3.8'
+services:
+  # User Service
+  user_service:
+    build: ./services/user_service
+    ports:
+      - "8001:8000"
+    environment:
+      - USER_MONGO_URI=mongodb://root:yourpassword@mongodb-user:27017/user_service_db
+    depends_on:
+      - mongodb-user
+
+  # Inventory Service
+  inventory_service:
+    build: ./services/inventory_service
+    ports:
+      - "8002:8000"
+    environment:
+      - INVENTORY_MONGO_URI=mongodb://root:yourpassword@mongodb-inventory:27017/inventory_service_db
+    depends_on:
+      - mongodb-inventory
+
+  # Sales Service
+  sales_service:
+    build: ./services/sales_service
+    ports:
+      - "8003:8000"
+    environment:
+      - SALES_MONGO_URI=mongodb://root:yourpassword@mongodb-sales:27017/sales_service_db
+    depends_on:
+      - mongodb-sales
+
+  # Payment Service
+  payment_service:
+    build: ./services/payment_service
+    ports:
+      - "8004:8000"
+    environment:
+      - PAYMENTS_MONGO_URI=mongodb://root:yourpassword@mongodb-payments:27017/payment_service_db
+    depends_on:
+      - mongodb-payments
+
+  # Notification Service
+  notification_service:
+    build: ./services/notification_service
+    ports:
+      - "8005:8000"
+    environment:
+      - NOTIF_MONGO_URI=mongodb://root:yourpassword@mongodb-notifications:27017/notification_service_db
+    depends_on:
+      - mongodb-notifications
+
+  # MongoDB Instances (DB-per-service)
+  mongodb-user:
+    image: mongo:6.0
+    environment:
+      - MONGO_INITDB_ROOT_USERNAME=root
+      - MONGO_INITDB_ROOT_PASSWORD=yourpassword
+    ports:
+      - "27017:27017"
+    volumes:
+      - user_mongo_data:/data/db
+
+  mongodb-inventory:
+    image: mongo:6.0
+    environment:
+      - MONGO_INITDB_ROOT_USERNAME=root
+      - MONGO_INITDB_ROOT_PASSWORD=yourpassword
+    ports:
+      - "27018:27017"
+    volumes:
+      - inventory_mongo_data:/data/db
+
+  mongodb-sales:
+    image: mongo:6.0
+    environment:
+      - MONGO_INITDB_ROOT_USERNAME=root
+      - MONGO_INITDB_ROOT_PASSWORD=yourpassword
+    ports:
+      - "27019:27017"
+    volumes:
+      - sales_mongo_data:/data/db
+
+  mongodb-payments:
+    image: mongo:6.0
+    environment:
+      - MONGO_INITDB_ROOT_USERNAME=root
+      - MONGO_INITDB_ROOT_PASSWORD=yourpassword
+    ports:
+      - "27020:27017"
+    volumes:
+      - payments_mongo_data:/data/db
+
+  mongodb-notifications:
+    image: mongo:6.0
+    environment:
+      - MONGO_INITDB_ROOT_USERNAME=root
+      - MONGO_INITDB_ROOT_PASSWORD=yourpassword
+    ports:
+      - "27021:27017"
+    volumes:
+      - notifications_mongo_data:/data/db
+
+volumes:
+  user_mongo_data:
+  inventory_mongo_data:
+  sales_mongo_data:
+  payments_mongo_data:
+  notifications_mongo_data:
