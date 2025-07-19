@@ -1,5 +1,3 @@
-<img src="https://r2cdn.perplexity.ai/pplx-full-logo-primary-dark%402x.png" class="logo" width="120"/>
-
 # Retail Management Platform – Full Low Level Design (LLD)
 
 This Low Level Design enables any engineer to understand, maintain, and extend the entire Retail Management Platform. All services are independent Python FastAPI microservices, connected only via APIs, with MongoDB-per-service and strict multi-tenancy throughout. Every class, DB schema, and endpoint is crafted to meet Indian retail needs, including GST, UPI, udhaar, inventory, payments, and digital sharing.

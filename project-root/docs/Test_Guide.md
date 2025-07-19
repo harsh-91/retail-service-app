@@ -1,9 +1,3 @@
-<img src="https://r2cdn.perplexity.ai/pplx-full-logo-primary-dark%402x.png" class="logo" width="120"/>
-
-# give me test guide
-
-Here’s a clear, step-by-step **Test Guide for Your Retail Management Platform**, drawing from best practices in retail/microservices testing and tailored to your specific architecture and functional scope[^2][^4][^5][^3][^6].
-
 # 🧪 Test Guide – Retail Management Platform
 
 ## 1. **Define the Scope \& Objectives**

@@ -1,5 +1,3 @@
-<img src="https://r2cdn.perplexity.ai/pplx-full-logo-primary-dark%402x.png" class="logo" width="120"/>
-
 # Retail Management Platform – Data Flow (Mermaid Diagram)
 
 Below is a comprehensive data flow for your multi-tenant retail platform, showing how requests and data traverse the system, how microservices interact, and where persistence and notifications occur. This diagram assumes a modern flow—covering onboarding, inventory, sales, GST invoicing, payments, and notifications.
