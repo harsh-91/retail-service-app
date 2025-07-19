@@ -1,9 +1,3 @@
-<img src="https://r2cdn.perplexity.ai/pplx-full-logo-primary-dark%402x.png" class="logo" width="120"/>
-
-# cool lets generate a killer readme file for the whole project
-
-Absolutely! Here’s a **killer README.md** custom-tailored for your Retail Management Platform as of July 2025. It’s intern-friendly, covers the architecture, setup, tenants, endpoints, and development workflow. It also includes copy-paste example commands, diagrams (Mermaid), and direct links to docs.
-
 # Retail Management Platform
 
 **A Modern, Multi-Tenant, GST-Ready SaaS to Power Retail in India**
