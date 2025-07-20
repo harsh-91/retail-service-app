@@ -1,9 +1,3 @@
-<img src="https://r2cdn.perplexity.ai/pplx-full-logo-primary-dark%402x.png" class="logo" width="120"/>
-
-# update documentation
-
-Certainly! Here’s an updated **Docker/Service Orchestration Documentation** section, tailored for your current production architecture and clearly reflecting your observed deployment.
-
 # **Service Orchestration \& Deployment (Docker Compose Cluster)**
 
 ## **Service Overview**

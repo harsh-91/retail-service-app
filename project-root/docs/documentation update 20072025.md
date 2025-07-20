@@ -1,9 +1,3 @@
-<img src="https://r2cdn.perplexity.ai/pplx-full-logo-primary-dark%402x.png" class="logo" width="120"/>
-
-# ok just update my documentation first
-
-Here’s a precise, updated summary of your Retail Management Platform documentation, integrating your current design and feature set:
-
 # Retail Management Platform — Documentation (July 2025)
 
 ## 1. Architecture Overview
