@@ -1,5 +1,5 @@
 from fastapi import FastAPI
-from app.api import payments
+from api import payments
 from fastapi.staticfiles import StaticFiles
 
 app = FastAPI()

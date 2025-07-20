@@ -1,5 +1,5 @@
 from fastapi import APIRouter, HTTPException
-from app.models.tenant import TenantCreate
+from models.tenants import TenantCreate
 from app.db.tenant_db import add_tenant, get_tenant
 
 router = APIRouter()

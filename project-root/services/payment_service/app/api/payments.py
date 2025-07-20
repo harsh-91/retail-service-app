@@ -1,14 +1,14 @@
 from fastapi import APIRouter, HTTPException, Depends, Query
-from app.models.payment import PaymentCreate, PaymentOut, PaymentStatusUpdate, PaymentSummaryOut
-from app.db.payments_db import (
+from models.payment import PaymentCreate, PaymentOut, PaymentStatusUpdate, PaymentSummaryOut
+from db.payments_db import (
     create_payment,
     get_payment,
     list_payments,
     update_payment_status,
     payment_summary,
 )
-from app.core.upi_utils import generate_upi_qr
-from app.core.auth_utils import get_current_user
+from core.upi_utils import generate_upi_qr
+from core.auth_utils import get_current_user
 from datetime import datetime
 
 router = APIRouter()

@@ -65,6 +65,7 @@ class SaleOut(BaseModel):
 
 class SaleGSTInvoiceCreate(BaseModel):
     tenant_id: str
+    establishment_id: Optional[str] = None
     sale_id: str
     supplier: GSTParty
     customer: GSTParty

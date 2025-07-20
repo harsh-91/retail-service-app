@@ -1,5 +1,5 @@
 from fastapi import FastAPI
-from app.api import tenant  # assumes your router is at app/api/tenant.py
+from api import tenant  # assumes your router is at api/tenant.py
 
 app = FastAPI(
     title="Tenant Service",

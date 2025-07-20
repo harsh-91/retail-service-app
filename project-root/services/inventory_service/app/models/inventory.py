@@ -3,6 +3,7 @@ from typing import Optional
 
 class ItemCreate(BaseModel):
     tenant_id: str = Field(..., description="Tenant identifier for data isolation")
+    establishment_id: Optional[str] = None
     item_id: str = Field(..., description="Unique ID or SKU")
     item_name: str
     quantity: int = Field(ge=0)

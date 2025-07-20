@@ -41,14 +41,14 @@ services:
       - mongodb-payments
 
   # Notification Service
-  notification_service:
-    build: ./services/notification_service
-    ports:
-      - "8005:8000"
-    environment:
-      - NOTIF_MONGO_URI=mongodb://root:yourpassword@mongodb-notifications:27017/notification_service_db
-    depends_on:
-      - mongodb-notifications
+  #notification_service:
+   # build: ./services/notification_service
+    #ports:
+     # - "8005:8000"
+    #environment:
+     # - NOTIF_MONGO_URI=mongodb://root:yourpassword@mongodb-notifications:27017/notification_service_db
+    #depends_on:
+     # - mongodb-notifications
 
   # MongoDB Instances (DB-per-service)
   mongodb-user:
@@ -91,19 +91,19 @@ services:
     volumes:
       - payments_mongo_data:/data/db
 
-  mongodb-notifications:
-    image: mongo:6.0
-    environment:
-      - MONGO_INITDB_ROOT_USERNAME=root
-      - MONGO_INITDB_ROOT_PASSWORD=yourpassword
-    ports:
-      - "27021:27017"
-    volumes:
-      - notifications_mongo_data:/data/db
+  #mongodb-notifications:
+   # image: mongo:6.0
+    #environment:
+     # - MONGO_INITDB_ROOT_USERNAME=root
+      #- MONGO_INITDB_ROOT_PASSWORD=yourpassword
+    #ports:
+     # - "27021:27017"
+    #volumes:
+     # - notifications_mongo_data:/data/db
 
 volumes:
   user_mongo_data:
   inventory_mongo_data:
   sales_mongo_data:
   payments_mongo_data:
-  notifications_mongo_data:
+  #notifications_mongo_data:

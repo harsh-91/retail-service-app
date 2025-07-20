@@ -1,6 +1,6 @@
 from fastapi import APIRouter, HTTPException, status, Query
-from app.models.inventory import ItemCreate, ItemUpdate, ItemOut, StockAdjust
-from app.db.inventory_db import (
+from models.inventory import ItemCreate, ItemUpdate, ItemOut, StockAdjust
+from db.inventory_db import (
     add_item,
     update_item,
     delete_item,

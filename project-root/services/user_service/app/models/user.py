@@ -1,15 +1,15 @@
-from pydantic import BaseModel, EmailStr, constr, field_validator
+from pydantic import BaseModel, EmailStr, constr, Field, field_validator
 from typing import Optional, List
 
-# --- Creation model: For new user registration ---
 class UserCreate(BaseModel):
+    tenant_id: str = Field(..., description="Tenant ID for multi-tenancy")
     username: constr(strip_whitespace=True, min_length=3, max_length=30)
-    mobile: constr(strip_whitespace=True, min_length=10, max_length=15)  # required
-    Business_name: constr(strip_whitespace=True, min_length=1, max_length=100)
+    mobile: constr(strip_whitespace=True, min_length=10, max_length=15)
+    business_name: constr(strip_whitespace=True, min_length=1, max_length=100)
     password: constr(min_length=8, max_length=128)
-    email: Optional[EmailStr] = None  # optional
+    email: Optional[EmailStr] = None
     full_name: Optional[constr(strip_whitespace=True, min_length=1, max_length=100)] = None
-    language_pref: str = "en"
+    language_pref: str = Field("en", description="Language preference")
     device_model: Optional[constr(strip_whitespace=True, max_length=100)] = None
     device_type: Optional[constr(strip_whitespace=True, max_length=50)] = None
 
@@ -27,26 +27,27 @@ class UserCreate(BaseModel):
         if v not in allowed:
             raise ValueError("Not a supported language")
         return v
-
-# --- For login: Accept username or mobile ---
+    
 class UserLogin(BaseModel):
+    tenant_id: str = ...  # Required!
     username: Optional[str] = None
     mobile: Optional[str] = None
     password: str
 
-# --- User profile response model ---  
 class UserProfile(BaseModel):
+    tenant_id: str
     username: str
     mobile: str
-    Business_name: str
-    email: Optional[str]
+    business_name: str
+    email: Optional[str] = None
     full_name: Optional[str] = None
     language_pref: str
     device_model: Optional[str] = None
     device_type: Optional[str] = None
-    roles: List[str]
+    roles: List[str]  # ["owner", "admin", "employee"], etc.
 
-# --- For updating user profile ---
 class UserProfileUpdate(BaseModel):
     full_name: Optional[constr(strip_whitespace=True, min_length=1, max_length=100)] = None
     language_pref: Optional[str] = None
+    device_model: Optional[str] = None
+    device_type: Optional[str] = None

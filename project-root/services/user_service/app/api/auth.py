@@ -1,7 +1,7 @@
 from fastapi import APIRouter, HTTPException, Depends
-from app.models.user import UserCreate, UserLogin, UserProfile, UserProfileUpdate
-from app.core.auth_utils import hash_password, verify_password, create_access_token, get_current_user
-from app.db.mongo import get_users_collection
+from models.user import UserCreate, UserLogin, UserProfile, UserProfileUpdate
+from core.auth_utils import hash_password, verify_password, create_access_token, get_current_user
+from db.mongo import get_users_collection
 
 router = APIRouter()
 

@@ -1,5 +1,5 @@
 from fastapi import FastAPI
-from app.api import auth
+from api import auth
 from fastapi.staticfiles import StaticFiles
 
 

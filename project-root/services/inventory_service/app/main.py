@@ -1,5 +1,5 @@
 from fastapi import FastAPI
-from app.api import inventory
+from api import inventory
 from fastapi.staticfiles import StaticFiles
 
 app = FastAPI()

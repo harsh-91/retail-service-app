@@ -1,5 +1,5 @@
 from fastapi import FastAPI
-from app.api import sales
+from api import sales
 from fastapi.staticfiles import StaticFiles
 
 app = FastAPI()

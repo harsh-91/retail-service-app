@@ -5,6 +5,7 @@ from datetime import datetime
 # -- Payment creation (POST /payments) --
 class PaymentCreate(BaseModel):
     tenant_id: str                           # Multi-tenancy enforcement
+    establishment_id: Optional[str] = None
     sale_id: str                             # Which sale is this payment for
     user: str                                # Who is recording it
     amount: condecimal(gt=0)

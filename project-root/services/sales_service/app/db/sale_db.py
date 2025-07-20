@@ -1,5 +1,6 @@
 from pymongo import MongoClient, ASCENDING
-from datetime import datetime
+from datetime import datetime, timedelta, timezone
+
 import os
 
 MONGO_URI = os.getenv("SALES_MONGO_URI", "mongodb://localhost:27017")
@@ -22,7 +23,7 @@ def add_sale(sale):
     collection = get_sales_collection()
     doc = sale.dict()
     doc["total_price"] = sale.quantity * sale.price_per_unit
-    doc["timestamp"] = datetime.utcnow().isoformat()
+    doc["timestamp"] = datetime.now(timezone.utc)
     # Generate a sale_id if not present (assign string from Mongo _id)
     result = collection.insert_one(doc)
     doc["sale_id"] = str(result.inserted_id)
@@ -51,7 +52,7 @@ def mark_udhaar_paid(tenant_id: str, sale_id: str, amount_received: float, payme
     Mark an udhaar (credit) sale as paid/partially paid.
     """
     collection = get_sales_collection()
-    ts = datetime.utcnow().isoformat()
+    ts = datetime.now(timezone.utc)
     result = collection.update_one(
         {"tenant_id": tenant_id, "sale_id": sale_id, "is_udhaar": True},
         {"$set": {
@@ -83,7 +84,7 @@ def record_invoice_share(tenant_id, sale_id, whatsapp):
     collection = get_sales_collection()
     collection.update_one(
         {"tenant_id": tenant_id, "sale_id": sale_id},
-        {"$set": {"invoice_shared_on": {"whatsapp": whatsapp, "time": datetime.utcnow().isoformat()}}}
+        {"$set": {"invoice_shared_on": {"whatsapp": whatsapp, "time": datetime.datetime.now(timezone.utc)}}}
     )
 
 def get_sales_summary(tenant_id: str, from_date: datetime, to_date: datetime):
@@ -121,3 +122,53 @@ def top_customers(tenant_id: str, limit: int = 5):
         {"$limit": limit}
     ]
     return list(collection.aggregate(pipeline))
+
+# --- Inventory helpers ---
+def inventory_exists(tenant_id, establishment_id, item_id, user):
+    # In production, check an inventory_service DB/collection
+    # For demo: always allow sale (simulate found)
+    return True
+
+def get_available_stock(tenant_id, establishment_id, item_id, user):
+    # In production: fetch stock value from inventory_service
+    # Here, just return 5 as a demo
+    return 5
+
+def deduct_inventory(tenant_id, establishment_id, item_id, qty, user):
+    # In prod: decrement inventory count for the item
+    pass
+
+_pending_inventory = []
+
+def set_pending_inventory_deduction(tenant_id, establishment_id, item_id, qty, user):
+    _pending_inventory.append({
+        "tenant_id": tenant_id,
+        "establishment_id": establishment_id,
+        "item_id": item_id,
+        "qty": qty,
+        "user": user,
+        "pending": True,
+        "time": datetime.utcnow().isoformat()
+    })
+
+_customer_credit_limits = {}  # (tenant_id, establishment_id, customer_id) -> float
+
+def get_customer_udhaar_total(tenant_id, establishment_id, customer_id):
+    collection = get_sales_collection()
+    match = {
+        "tenant_id": tenant_id,
+        "establishment_id": establishment_id,
+        "customer_id": customer_id,
+        "is_udhaar": True,
+        "udhaar_paid": {"$ne": True}
+    }
+    sales = list(collection.find(match))
+    return sum(s.get("total_price", 0) for s in sales)
+
+def get_customer_credit_limit(tenant_id, establishment_id, customer_id):
+    return _customer_credit_limits.get((tenant_id, establishment_id, customer_id), 1000.0)
+
+def set_customer_credit_limit(tenant_id, establishment_id, customer_id, limit, user):
+    _customer_credit_limits[(tenant_id, establishment_id, customer_id)] = limit
+    return {"status": "ok", "new_limit": limit}
+

@@ -2,8 +2,8 @@ import bcrypt
 from jose import jwt, JWTError
 from fastapi import HTTPException, status, Depends
 from fastapi.security import OAuth2PasswordBearer
-from app.db.mongo import get_users_collection  # USE THE MONGO HELPER NOW
-from datetime import datetime, timedelta, UTC
+from db.mongo import get_users_collection  # USE THE MONGO HELPER NOW
+from datetime import datetime, timedelta, timezone
 
 SECRET_KEY = "supersecretkey"  # Use env in prod!
 ALGORITHM = "HS256"
@@ -38,3 +38,9 @@ def get_current_user(token: str = Depends(oauth2_scheme)):
         raise HTTPException(status_code=404, detail="User not found")
     user.pop("_id", None)  # Remove ObjectId for cleaner output (optional)
     return user
+
+def get_current_tenant(current_user=Depends(get_current_user)) -> str:
+    """
+    Returns the tenant_id for the current authenticated user.
+    """
+    return current_user["tenant_id"]

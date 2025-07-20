@@ -5,3 +5,7 @@ python-dotenv
 jinja2
 weasyprint
 PyJWT
+email-validator
+bcrypt
+python-jose[cryptography]
+

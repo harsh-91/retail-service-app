@@ -1,7 +1,7 @@
 from fastapi import APIRouter, Depends, HTTPException
 from app.models.user import UserProfile, UserProfileUpdate
-from app.core.auth_utils import get_current_user
-from app.db.db import get_db
+from core.auth_utils import get_current_user
+from db.db import get_db
 
 router = APIRouter()
 
