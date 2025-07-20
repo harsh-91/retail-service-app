@@ -125,13 +125,13 @@ def receive_udhaar_payment(sale_id: str, update: SalePaymentUpdate, request: Req
     )
     if not updated:
         raise HTTPException(404, check_localized(request, "udhaar_not_found"))
-    return get_sales(update.tenant_id, sale_id=sale_id)[0]
+    return get_sale(update.tenant_id, sale_id=sale_id)[0]
 
 # Get all sales and filter by date or user
 @router.get("/sales", response_model=List[SaleOut])
 def list_sales(tenant_id: str, establishment_id: Optional[str] = None, from_date: Optional[date] = None,
                to_date: Optional[date] = None, user: Optional[str] = None, request: Request = None):
-    sales = get_sales(tenant_id, establishment_id, from_date, to_date, user)
+    sales = get_sale(tenant_id, establishment_id, from_date, to_date, user)
     return sales
 
 # Set customer credit/udhaar limit
@@ -189,3 +189,36 @@ def share_invoice_whatsapp(sale_id: str, tenant_id: str):
 def health(request: Request):
     return {"status": check_localized(request, "healthy")}
 
+from core.kafka_producer import emit_event
+
+@router.post('/sales', response_model=SaleOut)
+async def create_sale(
+    sale: SaleCreate,
+    request: Request,
+    user: dict = Depends(get_current_user),      # use the actual function, not '...'
+    tenant: dict = Depends(get_current_tenant)
+):
+    """
+    Create a new sale, emit it to Kafka.
+    """
+    # Save sale data to DB
+    sale_doc = await add_sale(sale, user, tenant)  # ensure this function is imported/implemented for sales_service
+
+    # Prepare and send event to analytics (Kafka)
+    event = {
+        "tenant_id": sale_doc["tenant_id"],
+        "sale_id": sale_doc["sale_id"],
+        "item_id": sale_doc["item_id"],
+        "item_name": sale_doc["item_name"],
+        "quantity": sale_doc["quantity"],
+        "total_price": sale_doc["total_price"],
+        "payment_method": sale_doc["payment_method"],
+        "customer_id": sale_doc.get("customer_id"),
+        "is_udhaar": sale_doc.get("is_udhaar", False),
+        "user": sale_doc["user"],
+        "timestamp": str(sale_doc.get("timestamp")),
+        # add more fields as needed
+    }
+    emit_event('sale.created', event)
+
+    return sale_doc

@@ -2,7 +2,7 @@ from fastapi import APIRouter, HTTPException, Depends, Query
 from typing import List
 from core.auth_utils import get_current_user
 from db.mongo import get_users_collection
-from app.models.user import UserProfile
+from models.user import UserProfile
 
 router = APIRouter(prefix="/users")
 

@@ -2,6 +2,9 @@ from fastapi import APIRouter, HTTPException, Depends
 from models.user import UserCreate, UserLogin, UserProfile, UserProfileUpdate
 from core.auth_utils import hash_password, verify_password, create_access_token, get_current_user
 from db.mongo import get_users_collection
+from core.kafka_producer import emit_event
+
+from datetime import datetime
 
 router = APIRouter()
 
@@ -18,18 +21,37 @@ def register(user: UserCreate):
         raise HTTPException(status_code=409, detail="Email already used")
 
     hashed_pwd = hash_password(user.password)
-    users.insert_one({
+    user_doc = {
+        "tenant_id": user.tenant_id,
         "username": user.username,
         "mobile": user.mobile,
         "email": user.email,
-        "Business_name": user.Business_name,
+        "business_name": user.business_name,
         "password_hash": hashed_pwd,
         "full_name": user.full_name,
         "language_pref": user.language_pref,
         "device_model": user.device_model,
         "device_type": user.device_type,
-        "roles": ["user"]
-    })
+        "roles": ["user"],
+        "created_at": datetime.utcnow()
+    }
+    users.insert_one(user_doc)
+
+    # Emit Kafka event after successful registration
+    event = {
+        "event_type": "user.registered",
+        "tenant_id": user_doc["tenant_id"],
+        "username": user_doc["username"],
+        "mobile": user_doc["mobile"],
+        "email": user_doc.get("email"),
+        "full_name": user_doc.get("full_name"),
+        "business_name": user_doc["business_name"],
+        "device_model": user_doc.get("device_model"),
+        "device_type": user_doc.get("device_type"),
+        "registered_at": str(user_doc["created_at"])
+    }
+    emit_event("user.registered", event)
+
     return {"msg": "User registered"}
 
 @router.post("/login")

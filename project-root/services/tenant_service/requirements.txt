@@ -5,3 +5,4 @@ python-dotenv
 jinja2
 weasyprint
 PyJWT
+kafka-python==2.0.2

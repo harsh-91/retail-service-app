@@ -1,61 +1,101 @@
-version: '3.8'
+version: "3.8"
+
 services:
-  # User Service
+
   user_service:
     build: ./services/user_service
     ports:
       - "8001:8000"
     environment:
-      - USER_MONGO_URI=mongodb://root:yourpassword@mongodb-user:27017/user_service_db
+      USER_MONGO_URI: mongodb://root:yourpassword@mongodb-user:27017/user_service_db
+      KAFKA_BOOTSTRAP_SERVERS: kafka:9092
     depends_on:
       - mongodb-user
 
-  # Inventory Service
   inventory_service:
     build: ./services/inventory_service
     ports:
       - "8002:8000"
     environment:
-      - INVENTORY_MONGO_URI=mongodb://root:yourpassword@mongodb-inventory:27017/inventory_service_db
+      INVENTORY_MONGO_URI: mongodb://root:yourpassword@mongodb-inventory:27017/inventory_service_db
     depends_on:
       - mongodb-inventory
 
-  # Sales Service
   sales_service:
     build: ./services/sales_service
     ports:
       - "8003:8000"
     environment:
-      - SALES_MONGO_URI=mongodb://root:yourpassword@mongodb-sales:27017/sales_service_db
+      SALES_MONGO_URI: mongodb://root:yourpassword@mongodb-sales:27017/sales_service_db
+      KAFKA_BOOTSTRAP_SERVERS: kafka:9092
     depends_on:
       - mongodb-sales
 
-  # Payment Service
   payment_service:
     build: ./services/payment_service
     ports:
       - "8004:8000"
     environment:
-      - PAYMENTS_MONGO_URI=mongodb://root:yourpassword@mongodb-payments:27017/payment_service_db
+      PAYMENTS_MONGO_URI: mongodb://root:yourpassword@mongodb-payments:27017/payment_service_db
     depends_on:
       - mongodb-payments
 
-  # Notification Service
-  #notification_service:
-   # build: ./services/notification_service
-    #ports:
-     # - "8005:8000"
-    #environment:
-     # - NOTIF_MONGO_URI=mongodb://root:yourpassword@mongodb-notifications:27017/notification_service_db
-    #depends_on:
-     # - mongodb-notifications
+  analytics_service:
+    build: ./services/analytics_service
+    ports:
+      - "8008:8000"
+    environment:
+      ANALYTICS_MONGO_URI: mongodb://root:yourpassword@mongodb-analytics:27017/analytics_service_db
+      KAFKA_BOOTSTRAP_SERVERS: kafka:9092
+    depends_on:
+      - kafka
+      - mongodb-analytics
 
-  # MongoDB Instances (DB-per-service)
+  tenant_service:
+    build: ./services/tenant_service
+    ports:
+      - "8005:8000"
+    environment:
+      TENANT_MONGO_URI: mongodb://root:yourpassword@mongodb-tenant:27017/tenant_service_db
+    depends_on:
+      - mongodb-tenant
+
+  mongodb-tenant:
+    image: mongo:6.0
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: root
+      MONGO_INITDB_ROOT_PASSWORD: yourpassword
+    ports:
+      - "27021:27017"
+    volumes:
+      - tenant_mongo_data:/data/db
+
+  kafka:
+    image: bitnami/kafka:3.7
+    ports:
+      - "9092:9092"
+    environment:
+      KAFKA_BROKER_ID: 1
+      KAFKA_CFG_ZOOKEEPER_CONNECT: zookeeper:2181
+      KAFKA_CFG_ADVERTISED_LISTENERS: PLAINTEXT://kafka:9092
+      KAFKA_CFG_LISTENERS: PLAINTEXT://0.0.0.0:9092
+      KAFKA_CFG_AUTO_CREATE_TOPICS_ENABLE: "true"
+      ALLOW_PLAINTEXT_LISTENER: "yes"
+    depends_on:
+      - zookeeper
+
+  zookeeper:
+    image: bitnami/zookeeper:3.9
+    ports:
+      - "2181:2181"
+    environment:
+      ALLOW_ANONYMOUS_LOGIN: "yes"
+
   mongodb-user:
     image: mongo:6.0
     environment:
-      - MONGO_INITDB_ROOT_USERNAME=root
-      - MONGO_INITDB_ROOT_PASSWORD=yourpassword
+      MONGO_INITDB_ROOT_USERNAME: root
+      MONGO_INITDB_ROOT_PASSWORD: yourpassword
     ports:
       - "27017:27017"
     volumes:
@@ -64,8 +104,8 @@ services:
   mongodb-inventory:
     image: mongo:6.0
     environment:
-      - MONGO_INITDB_ROOT_USERNAME=root
-      - MONGO_INITDB_ROOT_PASSWORD=yourpassword
+      MONGO_INITDB_ROOT_USERNAME: root
+      MONGO_INITDB_ROOT_PASSWORD: yourpassword
     ports:
       - "27018:27017"
     volumes:
@@ -74,8 +114,8 @@ services:
   mongodb-sales:
     image: mongo:6.0
     environment:
-      - MONGO_INITDB_ROOT_USERNAME=root
-      - MONGO_INITDB_ROOT_PASSWORD=yourpassword
+      MONGO_INITDB_ROOT_USERNAME: root
+      MONGO_INITDB_ROOT_PASSWORD: yourpassword
     ports:
       - "27019:27017"
     volumes:
@@ -84,26 +124,27 @@ services:
   mongodb-payments:
     image: mongo:6.0
     environment:
-      - MONGO_INITDB_ROOT_USERNAME=root
-      - MONGO_INITDB_ROOT_PASSWORD=yourpassword
+      MONGO_INITDB_ROOT_USERNAME: root
+      MONGO_INITDB_ROOT_PASSWORD: yourpassword
     ports:
       - "27020:27017"
     volumes:
       - payments_mongo_data:/data/db
 
-  #mongodb-notifications:
-   # image: mongo:6.0
-    #environment:
-     # - MONGO_INITDB_ROOT_USERNAME=root
-      #- MONGO_INITDB_ROOT_PASSWORD=yourpassword
-    #ports:
-     # - "27021:27017"
-    #volumes:
-     # - notifications_mongo_data:/data/db
+  mongodb-analytics:
+    image: mongo:6.0
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: root
+      MONGO_INITDB_ROOT_PASSWORD: yourpassword
+    ports:
+      - "27022:27017"
+    volumes:
+      - analytics_mongo_data:/data/db
 
 volumes:
   user_mongo_data:
   inventory_mongo_data:
   sales_mongo_data:
   payments_mongo_data:
-  #notifications_mongo_data:
+  analytics_mongo_data:
+  tenant_mongo_data:
