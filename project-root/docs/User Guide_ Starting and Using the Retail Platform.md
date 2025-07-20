@@ -1,5 +1,3 @@
-<img src="https://r2cdn.perplexity.ai/pplx-full-logo-primary-dark%402x.png" class="logo" width="120"/>
-
 # User Guide: Starting and Using the Retail Platform Backend (No Frontend Needed)
 
 This guide will help you start your backend microservices using Docker Compose and interact with all APIs from your terminal or Postman even if you have no frontend UI.
