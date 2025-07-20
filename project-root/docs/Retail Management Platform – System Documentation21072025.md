@@ -1,5 +1,3 @@
-<img src="https://r2cdn.perplexity.ai/pplx-full-logo-primary-dark%402x.png" class="logo" width="120"/>
-
 # Retail Management Platform – Real System Documentation (July 2025)
 
 This documentation describes the actual, reviewed implementation of your multi-tenant, microservices-based retail management SaaS. Every detail is based on your project’s source files, technical handover docs, and live service orchestration.
